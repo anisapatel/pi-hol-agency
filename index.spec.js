@@ -52,7 +52,7 @@ describe("getPossibleRoutes", () => {
       getPossibleRoutes(flights, departureAirport, destinationAirport)
     ).to.eql(["CE200"]);
   });
-  xit("if passed flights, return possible connecting routes", () => {
+  it("if passed flights, return possible connecting routes", () => {
     let flights = [
       "AB800",
       "BC900",
@@ -71,9 +71,6 @@ describe("getPossibleRoutes", () => {
     let destinationAirport = "D";
     expect(
       getPossibleRoutes(flights, departureAirport, destinationAirport)
-    ).to.eql([
-      ["BC900", "CD400"],
-      ["BF400", "FD200"],
-    ]);
+    ).to.eql(["BF400", "FD200"]);
   });
 });
