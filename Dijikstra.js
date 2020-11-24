@@ -1,4 +1,4 @@
-//understood how to implement dijikstra's algorithm by following this tutorial https://medium.com/@adriennetjohnson/a-walkthrough-of-dijkstras-algorithm-in-javascript-e94b74192026
+//https://medium.com/@adriennetjohnson/a-walkthrough-of-dijkstras-algorithm-in-javascript-e94b74192026
 
 class Graph {
   //create a weighted graph
@@ -46,15 +46,14 @@ class Graph {
         }
       });
     }
+
     let path = [endNode];
     let lastStep = endNode;
-
-    while (lastStep !== startNode) {
+    while (lastStep !== startNode && !path.includes(undefined)) {
       path.unshift(previous[lastStep]);
       lastStep = previous[lastStep];
     }
-
-    return `Path is ${path} and distance is ${distances[endNode]}`;
+    return { path, distance: distances[endNode] };
   }
 }
 

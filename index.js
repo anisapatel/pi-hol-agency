@@ -44,10 +44,6 @@ class Flight {
     );
   }
 
-  // [{departureAirport, destinationAirport, distance}]
-
-  // pass all the unique nodes into add node
-
   getShortestFlightRoute() {
     let routes = new Graph();
     this.nodes.forEach((node) => {
@@ -104,8 +100,8 @@ class Flight {
 // console.log(map.findPathWithDijikstra("B", "D"), "<--result");
 
 let flight = new Flight();
-flight.getDepartureAirport("B20");
-flight.getDestinationAirport("D");
+flight.getDepartureAirport("D20");
+flight.getDestinationAirport("B");
 let flights = [
   "AB800",
   "BC900",
