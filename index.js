@@ -5,6 +5,7 @@ class Flight {
     this.departureAirport = "";
     this.destinationAirport = "";
     this.flights = [];
+    this.lowestFlights = [];
     this.nodes = [];
   }
 
@@ -19,19 +20,21 @@ class Flight {
   }
 
   addFlights(flights) {
+    let flightArr = [];
     flights.forEach((flight) => {
       let flightObj = {
         airportPair: flight.slice(0, 2),
         distance: Number(flight.slice(2)),
       };
-      this.flights.push(flightObj);
+      flightArr.push(flightObj);
     });
+    this.flights = this.getUniqueFlights(flightArr);
     return this.flights;
   }
 
-  getUniqueFlights() {
+  getUniqueFlights(flightArr) {
     return Object.values(
-      this.flights.reduce((flight, currentObj) => {
+      flightArr.reduce((flight, currentObj) => {
         let airportPair = currentObj.airportPair;
         if (
           !flight[airportPair] ||
@@ -45,12 +48,36 @@ class Flight {
   }
 
   getShortestFlightRoute() {
+    const shortestPath = this.initialiseGraph();
+    console.log(shortestPath, "<--shortestPath");
+    //merge each letter of the array with the one after it
+    let newPath = ["D", "E", "B"];
+    let str = "";
+    let arr = [];
+    newPath.forEach((airport, index, array) => {
+      if (array[index + 1]) {
+        let pair = `${airport}${array[index + 1]}`;
+      }
+    });
+
+    // for (let i = 0; i < newPath.length - 1; i++) {
+    //   str = newPath[i] + newPath[i + 1];
+    //   let newArr = this.flights.map((flight) => {
+    //     if (flight.airportPair === str) {
+    //       arr.push(`${str}${flight.distance}`);
+    //     }
+    //   });
+    // }
+    console.log(arr.join(" --> "));
+  }
+
+  initialiseGraph() {
     let routes = new Graph();
     this.nodes.forEach((node) => {
       routes.addNode(node);
     });
-    let flightEdges = this.getUniqueFlights(this.flights);
-    flightEdges.map((flight) => {
+
+    this.flights.map((flight) => {
       routes.addEdge(
         flight.airportPair[0],
         flight.airportPair[1],
@@ -66,7 +93,7 @@ class Flight {
       this.destinationAirport,
       this.departureAirport
     );
-    console.log(outboundRoute, inboundRoute);
+    return [outboundRoute, inboundRoute];
   }
 
   getNodes(flights) {
