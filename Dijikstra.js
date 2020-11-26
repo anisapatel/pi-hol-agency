@@ -16,6 +16,7 @@ class Graph {
     this.adjacencyList[node1].push({ node: node2, weight: weight });
     // this.adjacencyList[node2].push({ node: node1, weight: weight });
   }
+
   findPathWithDijikstra(startNode, endNode) {
     let distances = {}; //stores the distances needed to reach that node from the fastest node
     let previous = {}; //store reference to the previous node
@@ -53,7 +54,20 @@ class Graph {
       path.unshift(previous[lastStep]);
       lastStep = previous[lastStep];
     }
-    return { path, distance: distances[endNode] };
+    return {
+      routes: this.formatOutput(path),
+      distance: distances[endNode] !== Infinity ? distances[endNode] : 0,
+    };
+  }
+  formatOutput(path) {
+    if (path.includes(undefined)) return [];
+    let routes = [];
+    let pair = "";
+    for (let i = 0; i < path.length - 1; i++) {
+      pair = path[i] + path[i + 1];
+      routes.push(pair);
+    }
+    return routes;
   }
 }
 
@@ -89,22 +103,3 @@ class PriorityQueue {
 }
 
 module.exports = Graph;
-
-// let map = new Graph();
-// map.addNode("A");
-// map.addNode("B");
-// map.addNode("C");
-// map.addNode("D");
-// map.addNode("E");
-// map.addNode("F");
-// map.addEdge("A", "B", 800);
-// map.addEdge("B", "C", 900);
-// map.addEdge("C", "D", 400);
-// map.addEdge("D", "E", 300); //also have 400
-// map.addEdge("B", "F", 400);
-// map.addEdge("C", "E", 200); //also has 300
-// map.addEdge("E", "B", 500); //also has 600
-// map.addEdge("D", "C", 700);
-// map.addEdge("F", "D", 200);
-// console.log(map.adjacencyList, "<--");
-// console.log(map.findPathWithDijikstra("B", "D"), "<--result");

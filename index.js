@@ -1,22 +1,22 @@
 const Graph = require("./Dijikstra");
+const Transport = require("./Transport");
 
 class Flight {
-  constructor() {
+  constructor(passengers, departureJourney, destination) {
+    this.departureJourney = departureJourney;
+    this.destinationAirport = destination;
+    this.passengers = passengers;
     this.departureAirport = "";
-    this.destinationAirport = "";
+    this.transportMiles = 0;
+    this.totalCost = 0;
     this.flights = [];
-    this.lowestFlights = [];
     this.nodes = [];
+    this.flightJourney = {};
   }
 
-  getDepartureAirport(departureJourney) {
-    this.departureAirport = departureJourney[0];
-    return this.departureAirport;
-  }
-
-  getDestinationAirport(destinationAirport) {
-    this.destinationAirport = destinationAirport;
-    return this.destinationAirport;
+  getDepartureData() {
+    this.departureAirport = this.departureJourney[0];
+    this.transportMiles = parseInt(this.departureJourney.slice(1));
   }
 
   addFlights(flights) {
@@ -29,7 +29,6 @@ class Flight {
       flightArr.push(flightObj);
     });
     this.flights = this.getUniqueFlights(flightArr);
-    return this.flights;
   }
 
   getUniqueFlights(flightArr) {
@@ -47,28 +46,19 @@ class Flight {
     );
   }
 
-  getShortestFlightRoute() {
-    const shortestPath = this.initialiseGraph();
-    console.log(shortestPath, "<--shortestPath");
-    //merge each letter of the array with the one after it
-    let newPath = ["D", "E", "B"];
-    let str = "";
-    let arr = [];
-    newPath.forEach((airport, index, array) => {
-      if (array[index + 1]) {
-        let pair = `${airport}${array[index + 1]}`;
-      }
-    });
-
-    // for (let i = 0; i < newPath.length - 1; i++) {
-    //   str = newPath[i] + newPath[i + 1];
-    //   let newArr = this.flights.map((flight) => {
-    //     if (flight.airportPair === str) {
-    //       arr.push(`${str}${flight.distance}`);
-    //     }
-    //   });
-    // }
-    console.log(arr.join(" --> "));
+  getFlightJourney() {
+    this.initialiseGraph();
+    let transport = new Transport(this.transportMiles, this.passengers);
+    let cheapestTransport = transport.getCheapestTransport();
+    this.flightJourney = {
+      ...this.flightJourney,
+      ...cheapestTransport,
+      totalCost:
+        this.totalCost === 0
+          ? 0
+          : this.totalCost + cheapestTransport.vehicleReturnCost,
+    };
+    return this.flightJourney;
   }
 
   initialiseGraph() {
@@ -85,15 +75,69 @@ class Flight {
       );
     });
 
-    let outboundRoute = routes.findPathWithDijikstra(
+    let outbound = routes.findPathWithDijikstra(
       this.departureAirport,
       this.destinationAirport
     );
-    let inboundRoute = routes.findPathWithDijikstra(
+
+    let outboundConnects;
+    let outboundFlightCost;
+
+    if (outbound.routes.length) {
+      outboundConnects = this.getConnectingFlights(outbound.routes);
+      outboundFlightCost = this.getFlightCosts(outbound.distance);
+    } else {
+      outboundConnects = "No outbound flight";
+      outboundFlightCost = 0;
+    }
+
+    let inbound = routes.findPathWithDijikstra(
       this.destinationAirport,
       this.departureAirport
     );
-    return [outboundRoute, inboundRoute];
+
+    let inboundConnects;
+    let inboundFlightCost;
+
+    if (inbound.routes.length) {
+      inboundConnects = this.getConnectingFlights(inbound.routes);
+      inboundFlightCost = this.getFlightCosts(inbound.distance);
+    } else {
+      inboundConnects = "No inbound flight";
+      inboundFlightCost = 0;
+    }
+
+    this.totalCost =
+      outboundFlightCost > 0 && inboundFlightCost > 0
+        ? outboundFlightCost + inboundFlightCost
+        : 0;
+
+    this.flightJourney = {
+      outboundRoute: outboundConnects,
+      outboundCost: outboundFlightCost,
+      inboundRoute: inboundConnects,
+      inboundCost: inboundFlightCost,
+    };
+  }
+
+  getConnectingFlights(routes) {
+    let connects = [];
+    routes.forEach((airport) => {
+      this.flights.map((flight) => {
+        if (flight.airportPair === airport) {
+          connects.push(`${airport}${flight.distance}`);
+        }
+      });
+    });
+    return connects.join(" --> ");
+  }
+
+  getFlightCosts(distance) {
+    if (typeof distance === "number") {
+      let cost = distance * 0.1 * this.passengers;
+      return cost;
+    }
+    return 0;
   }
 
   getNodes(flights) {
@@ -102,47 +146,7 @@ class Flight {
         this.nodes.push(flight[0] || flight[1]);
       }
     });
-    return this.nodes;
   }
 }
 
-// let map = new Graph();
-// map.addNode("A");
-// map.addNode("B");
-// map.addNode("C");
-// map.addNode("D");
-// map.addNode("E");
-// map.addNode("F");
-// map.addEdge("A", "B", 800);
-// map.addEdge("B", "C", 900);
-// map.addEdge("C", "D", 400);
-// map.addEdge("D", "E", 300); //also have 400
-// map.addEdge("B", "F", 400);
-// map.addEdge("C", "E", 200); //also has 300
-// map.addEdge("E", "B", 500); //also has 600
-// map.addEdge("D", "C", 700);
-// map.addEdge("F", "D", 200);
-
-// console.log(map.adjacencyList, "<--");
-// console.log(map.findPathWithDijikstra("B", "D"), "<--result");
-
-let flight = new Flight();
-flight.getDepartureAirport("D20");
-flight.getDestinationAirport("B");
-let flights = [
-  "AB800",
-  "BC900",
-  "CD400",
-  "DE400",
-  "BF400",
-  "CE300",
-  "DE300",
-  "EB600",
-  "CE200",
-  "DC700",
-  "EB500",
-  "FD200",
-];
-flight.addFlights(flights);
-flight.getNodes(flights);
-console.log(flight.getShortestFlightRoute());
+module.exports = Flight;
