@@ -2,16 +2,17 @@ const Graph = require("./Dijikstra");
 const Transport = require("./Transport");
 
 class Flight {
-  constructor(passengers, departureJourney, destination) {
+  constructor(passengers, departureJourney, destination, vehicle) {
     this.departureJourney = departureJourney;
     this.destinationAirport = destination;
     this.passengers = passengers;
+    this.vehicle = vehicle;
     this.departureAirport = "";
     this.transportMiles = 0;
     this.totalCost = 0;
     this.flights = [];
     this.nodes = [];
-    this.flightJourney = {};
+    this.returnJourney = {};
   }
 
   getDepartureData() {
@@ -20,6 +21,7 @@ class Flight {
   }
 
   addFlights(flights) {
+    //method to transform flights input
     let flightArr = [];
     flights.forEach((flight) => {
       let flightObj = {
@@ -32,6 +34,7 @@ class Flight {
   }
 
   getUniqueFlights(flightArr) {
+    //removes highest distance direct duplicate flights
     return Object.values(
       flightArr.reduce((flight, currentObj) => {
         let airportPair = currentObj.airportPair;
@@ -47,35 +50,43 @@ class Flight {
   }
 
   getFlightJourney() {
+    //outputs journey data in object
     this.initialiseGraph();
-    let transport = new Transport(this.transportMiles, this.passengers);
-    let cheapestTransport = transport.getCheapestTransport();
-    this.flightJourney = {
-      ...this.flightJourney,
-      ...cheapestTransport,
+    let transport = new Transport(
+      this.transportMiles,
+      this.passengers,
+      this.vehicle
+    );
+    let transportCost = transport.getTransportCost();
+    this.returnJourney = {
+      ...this.returnJourney,
+      ...transportCost,
       totalCost:
         this.totalCost === 0
           ? 0
-          : this.totalCost + cheapestTransport.vehicleReturnCost,
+          : this.totalCost + transportCost.vehicleReturnCost,
     };
-    return this.flightJourney;
+    return this.returnJourney;
   }
 
   initialiseGraph() {
+    //initialise data to input in Dijikstra's algorithm, add nodes
     let routes = new Graph();
     this.nodes.forEach((node) => {
       routes.addNode(node);
     });
 
     this.flights.map((flight) => {
+      //adds all the possible edges from the nodes with the distance to reach them
       routes.addEdge(
         flight.airportPair[0],
         flight.airportPair[1],
         flight.distance
       );
     });
-
+    //gets outbound and inbound shortest paths
     let outbound = routes.findPathWithDijikstra(
+      //refactor this section
       this.departureAirport,
       this.destinationAirport
     );
@@ -112,7 +123,7 @@ class Flight {
         ? outboundFlightCost + inboundFlightCost
         : 0;
 
-    this.flightJourney = {
+    this.returnJourney = {
       outboundRoute: outboundConnects,
       outboundCost: outboundFlightCost,
       inboundRoute: inboundConnects,
@@ -121,6 +132,7 @@ class Flight {
   }
 
   getConnectingFlights(routes) {
+    //data is received back in ["AB", "BC"] format so gets distance based on the airport pair key to get data in "AB800" --> "BC900"
     let connects = [];
     routes.forEach((airport) => {
       this.flights.map((flight) => {
@@ -133,6 +145,7 @@ class Flight {
   }
 
   getFlightCosts(distance) {
+    //get flight cost per passenger per mile
     if (typeof distance === "number") {
       let cost = distance * 0.1 * this.passengers;
       return cost;
@@ -141,9 +154,10 @@ class Flight {
   }
 
   getNodes(flights) {
+    //creates a array of possible nodes from the depature
     flights.forEach((flight) => {
-      if (!this.nodes.includes(flight[0] || flight[1])) {
-        this.nodes.push(flight[0] || flight[1]);
+      if (!this.nodes.includes(flight[0])) {
+        this.nodes.push(flight[0]);
       }
     });
   }
