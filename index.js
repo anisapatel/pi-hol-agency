@@ -15,7 +15,7 @@ class Flight {
     this.returnJourney = {};
   }
 
-  getDepartureData() {
+  addDepartureData() {
     this.departureAirport = this.departureJourney[0];
     this.transportMiles = parseInt(this.departureJourney.slice(1));
   }
@@ -153,7 +153,7 @@ class Flight {
     return 0;
   }
 
-  getNodes(flights) {
+  addNodes(flights) {
     //creates a array of possible nodes from the depature
     flights.forEach((flight) => {
       if (!this.nodes.includes(flight[0])) {

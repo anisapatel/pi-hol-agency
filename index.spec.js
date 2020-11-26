@@ -18,8 +18,8 @@ describe("Flight", () => {
   test("getFlightJourney 1: 2 passengers, B20, D, Car", () => {
     const testFlight = new Flight(2, "B20", "D", "Car");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney()).toEqual({
       inboundCost: 160,
       inboundRoute: "DE300 --> EB500",
@@ -33,8 +33,8 @@ describe("Flight", () => {
   test("getFlightJourney 2: 1 passenger, B30, D, Car", () => {
     const testFlight = new Flight(1, "B30", "D", "Car");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual(
       "BF400 --> FD200"
     );
@@ -47,8 +47,8 @@ describe("Flight", () => {
   test("getFlightJourney 3: 2 passengers, A20, D, Car", () => {
     const testFlight = new Flight(2, "A20", "D", "Car");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual(
       "AB800 --> BF400 --> FD200"
     );
@@ -61,8 +61,8 @@ describe("Flight", () => {
   test("getFlightJourney 4: 2 passengers, C30, A, Car", () => {
     const testFlight = new Flight(2, "C30", "A", "Car");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual(
       "No outbound flight"
     );
@@ -76,8 +76,8 @@ describe("Flight", () => {
   test("getFlightJourney 5: 2 passengers, B10, C, Taxi", () => {
     const testFlight = new Flight(2, "B10", "C", "Taxi");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual("BC900");
     expect(testFlight.getFlightJourney().inboundRoute).toEqual(
       "CE200 --> EB500"
@@ -90,8 +90,8 @@ describe("Flight", () => {
   test("getFlightJourney 6: 5 passengers, B10, C, Taxi", () => {
     const testFlight = new Flight(5, "B10", "C", "Taxi");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual("BC900");
     expect(testFlight.getFlightJourney().outboundCost).toEqual(450);
     expect(testFlight.getFlightJourney().inboundRoute).toEqual(
@@ -105,8 +105,8 @@ describe("Flight", () => {
   test("getFlightJourney 7: 1 passenger, D25, B, Car", () => {
     const testFlight = new Flight(1, "D25", "B", "Car");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual(
       "DE300 --> EB500"
     );
@@ -122,8 +122,8 @@ describe("Flight", () => {
   test("getFlightJourney 8: 4 passengers, D40, A, Car", () => {
     const testFlight = new Flight(4, "D40", "A", "Car");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual(
       "No outbound flight"
     );
@@ -139,8 +139,8 @@ describe("Flight", () => {
   test("getFlightJourney 9: 2 passengers, B5, D, Car", () => {
     const testFlight = new Flight(2, "B5", "D", "Car");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual(
       "BF400 --> FD200"
     );
@@ -156,8 +156,8 @@ describe("Flight", () => {
   test("getFlightJourney 10: 9 passengers, B30, D, Taxi", () => {
     const testFlight = new Flight(9, "B30", "D", "Taxi");
     testFlight.addFlights(flights);
-    testFlight.getNodes(flights);
-    testFlight.getDepartureData();
+    testFlight.addNodes(flights);
+    testFlight.addDepartureData();
     expect(testFlight.getFlightJourney().outboundRoute).toEqual(
       "BF400 --> FD200"
     );
